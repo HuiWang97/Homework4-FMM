@@ -32,22 +32,20 @@ def fmm1d_te_layer_modes(perm, period, k0, kx, N):
             corresponds to one mode)
     '''
 
-    Nx = perm.size
-    ### if (perm = scalar or perm[all]== equal): ??? homogenous
-
     ### creating the toeplitz matrix from the fft-permittivity
+    Nx = perm.size
     m = np.linspace(-N,N,2*N+1) # we don't want all the fourier components, but only 2N+1 of them
     perm_ft = fft(perm)/Nx
     if (perm_ft.size/2 >= N):
-        print("there are enough frequencies to fill the Toeplitz matrix")
-    else: print("not enough frequencies!")
+        print("ok, there are enough frequencies to fill the Toeplitz matrix")
+    else: print("not enough frequencies from fft")
     perm_ft_pos = perm_ft[0:2*N+1]
     perm_ft_neg=np.zeros_like(perm_ft_pos)
     perm_ft_neg[0] = perm_ft_pos[0]
     perm_ft_neg[1:] = perm_ft[-1:-2*N -1:-1]
     perm_toepl = toeplitz(perm_ft_pos, perm_ft_neg)
     if (perm_ft[0] == np.mean(perm)):
-        print("scaling is correct")
+        print("ok, scaling is correct")
     else: print("scaling is incorrect")
 
     ### creating the K^2 matrix
@@ -56,6 +54,15 @@ def fmm1d_te_layer_modes(perm, period, k0, kx, N):
 
     ### solving the eigenvalue problem
     beta_sq, phi_e = eig(perm_toepl * k0**2 - K_sq)
+
+    ### homogeneous layer
+    if (np.unique(perm).size ==1) or (perm.size == 1):
+        print("the layer is homogeneous with eps = ", perm[0])
+        phi_e = np.eye(2*N +1)
+        beta_sq = np.eye(2*N+1) * perm[0] * k0**2 - K_sq +0j
+    else: print("ok, the layer is inhomogeneous")
+
+    ### rooting beta
     beta = np.sqrt(beta_sq)
     beta[(beta.real + beta.imag < 0)] = -beta[(beta.real + beta.imag < 0)]
 
