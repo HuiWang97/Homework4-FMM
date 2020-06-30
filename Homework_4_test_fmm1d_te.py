@@ -33,3 +33,14 @@ perm_out    = 4.0   # permittivity on the exit side
 Nx          = 1001  # number of points to discretize the permittivity
                     # ditribution
 N           = 20    # number of positive Fourier orders
+
+
+x=np.linspace(0,Nx-1,Nx)/Nx*period
+layer_perm=np.ones((widths.size,Nx))*perm_l
+for w,width in enumerate(widths):
+    layer_perm[w,x<=width]=perm_h
+    
+
+theta=30*np.pi/180 # incident angle [rad]
+eta_r,eta_t,r,t=fmm1d_te(lam, theta, period, perm_in, perm_out,
+                          layer_perm, thicknesses, N)
