@@ -23,13 +23,24 @@ plt.close('all')
 
 # %% parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 lam       = 1.064  # vacuum wavelength [µm]
-period    = 3.0    # period of the grating [µm]
+period    = 3.0    # period of the grating [µm] ( = Lambda)
 width     = 1.5    # width of the high index region [µm]
 perm_l    = 1.0    # permittivity of the low index regions of the grating
 perm_h    = 4.0    # permittivity of the high index regions of the grating
 kx        = 0.0    # Bloch vector
 Nx        = 1001   # number of points to discretize the permittivity
-                   # ditribution
+                   # distribution
 N         = 25     # number of Fourier orders
 
 k0 = 2*np.pi/lam   # vacuum wavenumber
+
+### implement binary permittivity distribution
+x = np.linspace(0,Nx-1,Nx) / Nx *period
+perm = np.ones_like(x)*perm_l
+perm[np.abs(x-period/2)<= width/2] = perm_h
+# check if this was done correct:
+# fig = plt.figure()
+# plt.plot(x, perm)
+# plt.show()
+
+beta, phi_e = fmm1d_te_layer_modes(perm, period, k0, kx, N)

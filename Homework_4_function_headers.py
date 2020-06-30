@@ -31,6 +31,34 @@ def fmm1d_te_layer_modes(perm, period, k0, kx, N):
             Fourier coefficients of the eigenmodes (each column
             corresponds to one mode)
     '''
+
+    Nx = perm.size
+    ### if (perm = scalar or perm[all]== equal): ??? homogenous
+
+    ### creating the toeplitz matrix from the fft-permittivity
+    m = np.linspace(-N,N,2*N+1) # we don't want all the fourier components, but only 2N+1 of them
+    perm_ft = fft(perm)/Nx
+    if (perm_ft.size/2 >= N):
+        print("there are enough frequencies to fill the Toeplitz matrix")
+    else: print("not enough frequencies!")
+    perm_ft_pos = perm_ft[0:2*N+1]
+    perm_ft_neg = perm_ft[int(np.ceil((N-1)/2)):int(np.ceil((N-1)/2))+ 2*N +1]
+    perm_toepl = toeplitz(perm_ft_pos, perm_ft_neg)
+    if (perm_ft[0] == np.mean(perm)):
+        print("scaling is correct")
+    else: print("scaling is incorrect")
+
+    ### creating the K^2 matrix
+    G = m*2*np.pi / period
+    K_sq = (np.diag(G + kx))**2
+
+    ### solving the eigenvalue problem
+    beta_sq, phi_e = eig(perm_toepl * k0**2 - K_sq)
+    beta = np.sqrt(beta_sq)
+    beta[(beta.real + beta.imag < 0)] = -beta[(beta.real + beta.imag < 0)]
+
+    return beta, phi_e
+
     pass
 
 
