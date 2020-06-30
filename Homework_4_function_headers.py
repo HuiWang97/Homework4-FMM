@@ -158,7 +158,7 @@ def fmm1d_te(lam, theta, period, perm_in, perm_out,
         else:
             z=layer_thicknesses[i-1]
         perm2=layer_perm[i,:] #permittivity of the layer
-        beta2, phie2 = fmm1d_te_layer_modes2(perm2, period, k0, kx, N) #calculate eigenvalues and eigenvectors
+        beta2, phie2 = fmm1d_te_layer_modes(perm2, period, k0, kx, N) #calculate eigenvalues and eigenvectors
         beta_diag2=np.diag(beta2)
         t2=np.block([[phie2,phie2],[phie2@beta_diag2,-phie2@beta_diag2]]) # second matrix for interface
         p_plus=np.diag(np.exp(1j*beta1*z))
