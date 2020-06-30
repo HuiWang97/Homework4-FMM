@@ -42,7 +42,9 @@ def fmm1d_te_layer_modes(perm, period, k0, kx, N):
         print("there are enough frequencies to fill the Toeplitz matrix")
     else: print("not enough frequencies!")
     perm_ft_pos = perm_ft[0:2*N+1]
-    perm_ft_neg = perm_ft[int(np.ceil((N-1)/2)):int(np.ceil((N-1)/2))+ 2*N +1]
+    perm_ft_neg=np.zeros_like(perm_ft_pos)
+    perm_ft_neg[0] = perm_ft_pos[0]
+    perm_ft_neg[1:] = perm_ft[-1:-2*N -1:-1]
     perm_toepl = toeplitz(perm_ft_pos, perm_ft_neg)
     if (perm_ft[0] == np.mean(perm)):
         print("scaling is correct")
