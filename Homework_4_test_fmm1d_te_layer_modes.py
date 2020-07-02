@@ -36,11 +36,47 @@ k0 = 2*np.pi/lam   # vacuum wavenumber
 
 ### implement binary permittivity distribution
 x = np.linspace(0,Nx-1,Nx) / Nx *period
+
 perm = np.ones_like(x)*perm_l
+
 perm[np.abs(x-period/2)<= width/2] = perm_h
+
 # check if this was done correct:
+
 # fig = plt.figure()
+
 # plt.plot(x, perm)
+
 # plt.show()
 
-beta, phi_e = fmm1d_te_layer_modes(perm, period, k0, kx, N)
+
+#%%
+beta, phie = fmm1d_te_layer_modes(perm, period, k0, kx, N)
+
+
+#%%Plot
+m = np.linspace(-N,N,2*N+1)
+xp=np.tile(x,(2*N+1,1))
+fp=np.zeros_like(xp,dtype=complex)
+for i in range(0,2*N+1):
+    fp[i,:]=np.exp(1j*m[i]*2*np.pi/period*xp[i,:]) # the field distribution along x for each fourier order
+
+Nm=20 # mode order[-N,N]
+coeff=np.diag(phie[:,Nm+N])
+mode1=coeff@fp
+modex=np.sum(mode1,axis=0) #mode distribution along x
+
+Nw=101
+z=np.linspace(0,Nw-1,Nw)/(Nw-1)*width
+mode=np.zeros((Nw,Nx),dtype=complex)
+for i in range(0,Nw):
+    mode[i,:]=np.exp(1j*beta[Nm+N]*z[i])*modex #add the propagation along z
+
+plt.figure(figsize=[10,7])
+plt.pcolormesh(x,z,np.real(mode),cmap='rainbow')
+plt.colorbar()
+plt.xlabel('x/$\mu$m')
+plt.ylabel('z/$\mu$m')
+plt.show()
+
+
