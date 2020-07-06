@@ -68,7 +68,8 @@ mode1=coeff@fp
 modex=np.sum(mode1,axis=0) #mode distribution along x
 
 Nw=101
-z=np.linspace(0,Nw-1,Nw)/(Nw-1)*width
+width2=3
+z=np.linspace(0,Nw-1,Nw)/Nw*width2
 mode=np.zeros((Nw,Nx),dtype=complex)
 for i in range(0,Nw):
     mode[i,:]=np.exp(1j*beta[Nm+N]*z[i])*modex #add the propagation along z
