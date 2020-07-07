@@ -101,7 +101,7 @@ def fmm1d_te_layer_modes(perm, period, k0, kx, N):
 
 
 def fmm1d_te(lam, theta, period, perm_in, perm_out,
-             layer_perm, layer_ticknesses, N):
+             layer_perm, layer_thicknesses, N):
     '''Calculates the TE diffraction efficiencies for a one-dimensional
     layered grating structure using the T-matrix method.
 
